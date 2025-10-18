@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>📸 Photobooth</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 50%, #0f1419 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      overflow-x: hidden;
+    }
+
+    .container {
+      max-width: 600px;
+      width: 90%;
+      padding: 2rem;
+    }
+
+    .glass-card {
+      background: rgba(20, 30, 48, 0.7);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(64, 224, 208, 0.2);
+      border-radius: 24px;
+      padding: 2rem;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      text-align: center;
+      margin-bottom: 1rem;
+      background: linear-gradient(135deg, #40E0D0, #00CED1, #48D1CC);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .subtitle {
+      text-align: center;
+      color: rgba(255, 255, 255, 0.6);
+      margin-bottom: 2rem;
+      font-size: 1.1rem;
+    }
+
+    .video-container {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 4/5;
+      border-radius: 16px;
+      overflow: hidden;
+      background: rgba(0, 0, 0, 0.5);
+      border: 2px solid rgba(64, 224, 208, 0.3);
+      margin-bottom: 1.5rem;
+    }
+
+    #video, #canvas {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    #canvas {
+      display: none;
+    }
+
+    .countdown {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 8rem;
+      font-weight: bold;
+      color: #40E0D0;
+      text-shadow: 0 0 40px rgba(64, 224, 208, 0.8);
+      animation: pulse 1s ease-in-out;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: translate(-50%, -50%) scale(1); }
+      50% { transform: translate(-50%, -50%) scale(1.2); }
+    }
+
+    .error-message {
+      background: rgba(220, 38, 38, 0.2);
+      border: 1px solid rgba(220, 38, 38, 0.5);
+      color: #FCA5A5;
+      padding: 1rem;
+      border-radius: 12px;
+      margin-bottom: 1rem;
+      text-align: center;
+    }
+
+    .success-message {
+      background: rgba(34, 197, 94, 0.2);
+      border: 1px solid rgba(34, 197, 94, 0.5);
+      color: #86EFAC;
+      padding: 1rem;
+      border-radius: 12px;
+      margin-bottom: 1rem;
+      text-align: center;
+      font-size: 1.2rem;
+    }
+
+    .btn {
+      width: 100%;
+      padding: 1.2rem;
+      border: none;
+      border-radius: 12px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-bottom: 1rem;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #40E0D0, #00CED1);
+      color: #0a0e27;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(64, 224, 208, 0.4);
+    }
+
+    .btn-primary:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .btn-secondary {
+      background: rgba(64, 224, 208, 0.1);
+      color: #40E0D0;
+      border: 1px solid rgba(64, 224, 208, 0.3);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(64, 224, 208, 0.2);
+    }
+
+    .photo-preview {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .photo-preview img {
+      width: 100%;
+      aspect-ratio: 4/5;
+      object-fit: cover;
+      border-radius: 8px;
+      border: 2px solid rgba(64, 224, 208, 0.3);
+    }
+
+    .loading {
+      text-align: center;
+      padding: 2rem;
+    }
+
+    .spinner {
+      width: 50px;
+      height: 50px;
+      border: 4px solid rgba(64, 224, 208, 0.2);
+      border-top: 4px solid #40E0D0;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 1rem;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .status {
+      text-align: center;
+      color: rgba(255, 255, 255, 0.5);
+      font-size: 0.9rem;
+      margin-top: 1rem;
+    }
+
+    .hidden {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="glass-card">
+      <h1>📸 Photobooth</h1>
+      <p class="subtitle">Souriez, vous allez être célèbre !</p>
+
+      <div id="errorMessage" class="error-message hidden"></div>
+      <div id="successMessage" class="success-message hidden"></div>
+
+      <div class="video-container">
+        <video id="video" autoplay playsinline></video>
+        <canvas id="canvas"></canvas>
+        <div id="countdown" class="countdown hidden"></div>
+      </div>
+
+      <div id="photoPreview" class="photo-preview hidden"></div>
+
+      <button id="startBtn" class="btn btn-primary">
+        🎬 Démarrer la séance
+      </button>
+
+      <button id="retakeBtn" class="btn btn-secondary hidden">
+        🔄 Recommencer
+      </button>
+
+      <button id="uploadBtn" class="btn btn-primary hidden">
+        📤 Envoyer les photos
+      </button>
+
+      <div id="loading" class="loading hidden">
+        <div class="spinner"></div>
+        <p>Envoi en cours...</p>
+      </div>
+
+      <p class="status">3 photos seront prises automatiquement</p>
+    </div>
+  </div>
+
+  <script>
+    const video = document.getElementById('video');
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    const startBtn = document.getElementById('startBtn');
+    const retakeBtn = document.getElementById('retakeBtn');
+    const uploadBtn = document.getElementById('uploadBtn');
+    const countdown = document.getElementById('countdown');
+    const photoPreview = document.getElementById('photoPreview');
+    const errorMessage = document.getElementById('errorMessage');
+    const successMessage = document.getElementById('successMessage');
+    const loading = document.getElementById('loading');
+
+    let capturedPhotos = [];
+    let stream = null;
+
+    // Initialiser la caméra
+    async function initCamera() {
+      try {
+        stream = await navigator.mediaDevices.getUserMedia({ 
+          video: { 
+            width: 1080, 
+            height: 1350,
+            facingMode: 'user' 
+          } 
+        });
+        video.srcObject = stream;
+        hideError();
+      } catch (error) {
+        showError('Impossible d\'accéder à la caméra. Veuillez autoriser l\'accès.');
+      }
+    }
+
+    // Démarrer la séance photo
+    startBtn.addEventListener('click', async () => {
+      if (!stream) await initCamera();
+      capturedPhotos = [];
+      photoPreview.innerHTML = '';
+      photoPreview.classList.add('hidden');
+      retakeBtn.classList.add('hidden');
+      uploadBtn.classList.add('hidden');
+      startBtn.disabled = true;
+      
+      await takePhotos();
+    });
+
+    // Prendre 3 photos
+    async function takePhotos() {
+      for (let i = 0; i < 3; i++) {
+        await showCountdown(3);
+        const photo = capturePhoto();
+        capturedPhotos.push(photo);
+        displayPhoto(photo);
+        await sleep(500);
+      }
+      
+      startBtn.disabled = false;
+      photoPreview.classList.remove('hidden');
+      retakeBtn.classList.remove('hidden');
+      uploadBtn.classList.remove('hidden');
+    }
+
+    // Compte à rebours
+    function showCountdown(seconds) {
+      return new Promise(resolve => {
+        countdown.classList.remove('hidden');
+        let count = seconds;
+        countdown.textContent = count;
+        
+        const interval = setInterval(() => {
+          count--;
+          if (count > 0) {
+            countdown.textContent = count;
+          } else {
+            countdown.classList.add('hidden');
+            clearInterval(interval);
+            resolve();
+          }
+        }, 1000);
+      });
+    }
+
+    // Capturer une photo
+    function capturePhoto() {
+      canvas.width = 1080;
+      canvas.height = 1350;
+      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+      return canvas.toDataURL('image/jpeg', 0.9);
+    }
+
+    // Afficher la photo
+    function displayPhoto(dataUrl) {
+      const img = document.createElement('img');
+      img.src = dataUrl;
+      photoPreview.appendChild(img);
+    }
+
+    // Recommencer
+    retakeBtn.addEventListener('click', () => {
+      capturedPhotos = [];
+      photoPreview.innerHTML = '';
+      photoPreview.classList.add('hidden');
+      retakeBtn.classList.add('hidden');
+      uploadBtn.classList.add('hidden');
+    });
+
+    // Envoyer les photos
+    uploadBtn.addEventListener('click', async () => {
+      loading.classList.remove('hidden');
+      uploadBtn.disabled = true;
+
+      try {
+        const formData = new FormData();
+        
+        for (let i = 0; i < capturedPhotos.length; i++) {
+          const blob = await fetch(capturedPhotos[i]).then(r => r.blob());
+          formData.append('photos', blob, `photo${i + 1}.jpg`);
+        }
+
+        const response = await fetch('/api/upload', {
+          method: 'POST',
+          body: formData
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+          showSuccess('✅ Photos envoyées avec succès !');
+          capturedPhotos = [];
+          photoPreview.innerHTML = '';
+          photoPreview.classList.add('hidden');
+          retakeBtn.classList.add('hidden');
+          uploadBtn.classList.add('hidden');
+          
+          setTimeout(() => {
+            successMessage.classList.add('hidden');
+          }, 3000);
+        } else {
+          showError('Erreur lors de l\'envoi des photos');
+        }
+      } catch (error) {
+        showError('Erreur de connexion au serveur');
+      } finally {
+        loading.classList.add('hidden');
+        uploadBtn.disabled = false;
+      }
+    });
+
+    // Utilitaires
+    function showError(message) {
+      errorMessage.textContent = message;
+      errorMessage.classList.remove('hidden');
+    }
+
+    function hideError() {
+      errorMessage.classList.add('hidden');
+    }
+
+    function showSuccess(message) {
+      successMessage.textContent = message;
+      successMessage.classList.remove('hidden');
+    }
+
+    function sleep(ms) {
+      return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    // Initialiser au chargement
+    initCamera();
+  </script>
+</body>
+</html>

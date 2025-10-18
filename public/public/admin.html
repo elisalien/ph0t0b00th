@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🎛️ Admin - Photobooth</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 50%, #0f1419 100%);
+      min-height: 100vh;
+      padding: 2rem;
+      color: white;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .glass-card {
+      background: rgba(20, 30, 48, 0.7);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(64, 224, 208, 0.2);
+      border-radius: 24px;
+      padding: 2rem;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+      margin-bottom: 2rem;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      margin-bottom: 0.5rem;
+      background: linear-gradient(135deg, #40E0D0, #00CED1, #48D1CC);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .subtitle {
+      color: rgba(255, 255, 255, 0.6);
+      margin-bottom: 2rem;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .stat-card {
+      background: rgba(64, 224, 208, 0.1);
+      border: 1px solid rgba(64, 224, 208, 0.3);
+      border-radius: 12px;
+      padding: 1.5rem;
+      text-align: center;
+    }
+
+    .stat-value {
+      font-size: 2.5rem;
+      font-weight: bold;
+      color: #40E0D0;
+      margin-bottom: 0.5rem;
+    }
+
+    .stat-label {
+      color: rgba(255, 255, 255, 0.6);
+      font-size: 0.9rem;
+    }
+
+    .series-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .series-card {
+      background: rgba(30, 40, 60, 0.5);
+      border: 1px solid rgba(64, 224, 208, 0.2);
+      border-radius: 16px;
+      padding: 1rem;
+      transition: all 0.3s ease;
+    }
+
+    .series-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(64, 224, 208, 0.5);
+    }
+
+    .series-photos {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .series-photos img {
+      width: 100%;
+      aspect-ratio: 4/5;
+      object-fit: cover;
+      border-radius: 8px;
+      border: 1px solid rgba(64, 224, 208, 0.2);
+    }
+
+    .series-info {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: rgba(255, 255, 255, 0.6);
+      font-size: 0.85rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .btn-delete {
+      width: 100%;
+      padding: 0.75rem;
+      background: rgba(220, 38, 38, 0.2);
+      border: 1px solid rgba(220, 38, 38, 0.5);
+      color: #FCA5A5;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+
+    .btn-delete:hover {
+      background: rgba(220, 38, 38, 0.3);
+    }
+
+    .loading {
+      text-align: center;
+      padding: 3rem;
+    }
+
+    .spinner {
+      width: 50px;
+      height: 50px;
+      border: 4px solid rgba(64, 224, 208, 0.2);
+      border-top: 4px solid #40E0D0;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 1rem;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 3rem;
+      color: rgba(255, 255, 255, 0.5);
+    }
+
+    .empty-state-icon {
+      font-size: 4rem;
+      margin-bottom: 1rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="glass-card">
+      <h1>🎛️ Administration</h1>
+      <p class="subtitle">Gérez vos séries de photos</p>
+
+      <div class="stats">
+        <div class="stat-card">
+          <div class="stat-value" id="totalSeries">0</div>
+          <div class="stat-label">Séries totales</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="totalPhotos">0</div>
+          <div class="stat-label">Photos totales</div>
+        </div>
+      </div>
+    </div>
+
+    <div id="loading" class="loading">
+      <div class="spinner"></div>
+      <p style="color: rgba(255, 255, 255, 0.6);">Chargement des séries...</p>
+    </div>
+
+    <div id="seriesContainer" class="series-grid"></div>
+
+    <div id="emptyState" class="glass-card empty-state" style="display: none;">
+      <div class="empty-state-icon">📸</div>
+      <h3>Aucune série de photos</h3>
+      <p>Les photos prises apparaîtront ici</p>
+    </div>
+  </div>
+
+  <script>
+    const loading = document.getElementById('loading');
+    const seriesContainer = document.getElementById('seriesContainer');
+    const emptyState = document.getElementById('emptyState');
+    const totalSeriesEl = document.getElementById('totalSeries');
+    const totalPhotosEl = document.getElementById('totalPhotos');
+
+    // Charger les séries
+    async function loadSeries() {
+      try {
+        const response = await fetch('/api/series');
+        const data = await response.json();
+
+        loading.style.display = 'none';
+
+        if (data.series && data.series.length > 0) {
+          displaySeries(data.series);
+          updateStats(data.series);
+          emptyState.style.display = 'none';
+        } else {
+          seriesContainer.innerHTML = '';
+          emptyState.style.display = 'block';
+          updateStats([]);
+        }
+      } catch (error) {
+        loading.style.display = 'none';
+        console.error('Erreur:', error);
+      }
+    }
+
+    // Afficher les séries
+    function displaySeries(series) {
+      seriesContainer.innerHTML = series.map(s => `
+        <div class="series-card">
+          <div class="series-photos">
+            ${s.photos.map(photo => `
+              <img src="${photo}" alt="Photo">
+            `).join('')}
+          </div>
+          <div class="series-info">
+            <span>📅 ${formatDate(s.timestamp)}</span>
+            <span>${s.count} photos</span>
+          </div>
+          <button class="btn-delete" onclick="deleteSeries('${s.id}')">
+            🗑️ Supprimer
+          </button>
+        </div>
+      `).join('');
+    }
+
+    // Mettre à jour les statistiques
+    function updateStats(series) {
+      totalSeriesEl.textContent = series.length;
+      const totalPhotos = series.reduce((acc, s) => acc + s.count, 0);
+      totalPhotosEl.textContent = totalPhotos;
+    }
+
+    // Supprimer une série
+    async function deleteSeries(id) {
+      if (!confirm('Êtes-vous sûr de vouloir supprimer cette série ?')) return;
+
+      try {
+        const response = await fetch(`/api/series/${id}`, {
+          method: 'DELETE'
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+          loadSeries();
+        } else {
+          alert('Erreur lors de la suppression');
+        }
+      } catch (error) {
+        alert('Erreur de connexion');
+      }
+    }
+
+    // Formater la date
+    function formatDate(timestamp) {
+      const date = new Date(timestamp);
+      return date.toLocaleString('fr-FR', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+    }
+
+    // Charger au démarrage
+    loadSeries();
+
+    // Recharger toutes les 10 secondes
+    setInterval(loadSeries, 10000);
+  </script>
+</body>
+</html>
