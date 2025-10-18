@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>🎛️ Admin - Photobooth</title>
+  <title>📸 Photobooth</title>
   <style>
     * {
       margin: 0;
@@ -15,13 +15,16 @@
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
       background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 50%, #0f1419 100%);
       min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       color: white;
       overflow-x: hidden;
     }
 
     .container {
-      max-width: 1400px;
-      margin: 0 auto;
+      max-width: 600px;
+      width: 90%;
       padding: 2rem;
     }
 
@@ -32,12 +35,12 @@
       border-radius: 24px;
       padding: 2rem;
       box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
-      margin-bottom: 2rem;
     }
 
     h1 {
       font-size: 2.5rem;
-      margin-bottom: 0.5rem;
+      text-align: center;
+      margin-bottom: 1rem;
       background: linear-gradient(135deg, #40E0D0, #00CED1, #48D1CC);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
@@ -45,201 +48,81 @@
     }
 
     .subtitle {
-      color: rgba(255, 255, 255, 0.6);
-      margin-bottom: 2rem;
-    }
-
-    .tabs {
-      display: flex;
-      gap: 1rem;
-      margin-bottom: 2rem;
-    }
-
-    .tab {
-      padding: 1rem 2rem;
-      background: rgba(64, 224, 208, 0.1);
-      border: 1px solid rgba(64, 224, 208, 0.3);
-      border-radius: 12px;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      font-weight: 600;
-      color: rgba(255, 255, 255, 0.7);
-    }
-
-    .tab.active {
-      background: linear-gradient(135deg, #40E0D0, #00CED1);
-      color: #0a0e27;
-      border-color: transparent;
-    }
-
-    .tab:hover:not(.active) {
-      background: rgba(64, 224, 208, 0.2);
-    }
-
-    .tab-content {
-      display: none;
-    }
-
-    .tab-content.active {
-      display: block;
-    }
-
-    /* Stats */
-    .stats {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 1rem;
-      margin-bottom: 2rem;
-    }
-
-    .stat-card {
-      background: rgba(64, 224, 208, 0.1);
-      border: 1px solid rgba(64, 224, 208, 0.3);
-      border-radius: 12px;
-      padding: 1.5rem;
       text-align: center;
-    }
-
-    .stat-value {
-      font-size: 2.5rem;
-      font-weight: bold;
-      color: #40E0D0;
-      margin-bottom: 0.5rem;
-    }
-
-    .stat-label {
       color: rgba(255, 255, 255, 0.6);
-      font-size: 0.9rem;
+      margin-bottom: 2rem;
+      font-size: 1.1rem;
     }
 
-    /* Diaporama */
-    .slideshow-container {
+    .video-container {
       position: relative;
       width: 100%;
-      max-width: 540px;
       aspect-ratio: 4/5;
-      margin: 0 auto 2rem;
       border-radius: 16px;
       overflow: hidden;
       background: rgba(0, 0, 0, 0.5);
       border: 2px solid rgba(64, 224, 208, 0.3);
-    }
-
-    .slideshow-image {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      object-fit: contain;
-      opacity: 0;
-      transition: opacity 1s ease-in-out;
-    }
-
-    .slideshow-image.active {
-      opacity: 1;
-    }
-
-    .slideshow-overlay {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      pointer-events: none;
-      z-index: 10;
-    }
-
-    .slideshow-controls {
-      display: grid;
-      gap: 1rem;
-      margin-bottom: 2rem;
-    }
-
-    .control-group {
-      background: rgba(30, 40, 60, 0.5);
-      padding: 1.5rem;
-      border-radius: 12px;
-      border: 1px solid rgba(64, 224, 208, 0.2);
-    }
-
-    .control-label {
-      display: block;
-      color: #40E0D0;
-      font-weight: 600;
-      margin-bottom: 0.5rem;
-    }
-
-    .control-info {
-      color: rgba(255, 255, 255, 0.5);
-      font-size: 0.85rem;
-      margin-bottom: 1rem;
-    }
-
-    input[type="range"] {
-      width: 100%;
-      height: 8px;
-      border-radius: 4px;
-      background: rgba(64, 224, 208, 0.2);
-      outline: none;
-    }
-
-    input[type="range"]::-webkit-slider-thumb {
-      appearance: none;
-      width: 20px;
-      height: 20px;
-      border-radius: 50%;
-      background: #40E0D0;
-      cursor: pointer;
-    }
-
-    input[type="file"] {
-      display: block;
-      width: 100%;
-      padding: 1rem;
-      background: rgba(64, 224, 208, 0.1);
-      border: 2px dashed rgba(64, 224, 208, 0.3);
-      border-radius: 8px;
-      color: white;
-      cursor: pointer;
-    }
-
-    input[type="file"]::file-selector-button {
-      padding: 0.5rem 1rem;
-      background: linear-gradient(135deg, #40E0D0, #00CED1);
-      color: #0a0e27;
-      border: none;
-      border-radius: 6px;
-      font-weight: 600;
-      cursor: pointer;
-      margin-right: 1rem;
-    }
-
-    .slider-value {
-      display: inline-block;
-      background: rgba(64, 224, 208, 0.2);
-      padding: 0.25rem 0.75rem;
-      border-radius: 6px;
-      color: #40E0D0;
-      font-weight: 600;
-      margin-left: 1rem;
-    }
-
-    /* Galerie */
-    .toolbar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
       margin-bottom: 1.5rem;
+    }
+
+    #video, #canvas {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    #canvas {
+      display: none;
+    }
+
+    .countdown {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 8rem;
+      font-weight: bold;
+      color: #40E0D0;
+      text-shadow: 0 0 40px rgba(64, 224, 208, 0.8);
+      animation: pulse 1s ease-in-out;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: translate(-50%, -50%) scale(1); }
+      50% { transform: translate(-50%, -50%) scale(1.2); }
+    }
+
+    .error-message {
+      background: rgba(220, 38, 38, 0.2);
+      border: 1px solid rgba(220, 38, 38, 0.5);
+      color: #FCA5A5;
       padding: 1rem;
-      background: rgba(30, 40, 60, 0.5);
       border-radius: 12px;
-      border: 1px solid rgba(64, 224, 208, 0.2);
+      margin-bottom: 1rem;
+      text-align: center;
+    }
+
+    .success-message {
+      background: rgba(34, 197, 94, 0.2);
+      border: 1px solid rgba(34, 197, 94, 0.5);
+      color: #86EFAC;
+      padding: 1rem;
+      border-radius: 12px;
+      margin-bottom: 1rem;
+      text-align: center;
+      font-size: 1.2rem;
     }
 
     .btn {
-      padding: 0.75rem 1.5rem;
+      width: 100%;
+      padding: 1.2rem;
       border: none;
-      border-radius: 8px;
+      border-radius: 12px;
+      font-size: 1.1rem;
       font-weight: 600;
       cursor: pointer;
       transition: all 0.3s ease;
+      margin-bottom: 1rem;
     }
 
     .btn-primary {
@@ -247,94 +130,45 @@
       color: #0a0e27;
     }
 
-    .btn-danger {
-      background: rgba(220, 38, 38, 0.2);
-      border: 1px solid rgba(220, 38, 38, 0.5);
-      color: #FCA5A5;
-    }
-
-    .btn:hover {
+    .btn-primary:hover {
       transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(64, 224, 208, 0.4);
     }
 
-    .series-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-      gap: 1.5rem;
+    .btn-primary:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
     }
 
-    .series-card {
-      background: rgba(30, 40, 60, 0.5);
-      border: 1px solid rgba(64, 224, 208, 0.2);
-      border-radius: 16px;
-      padding: 1rem;
-      transition: all 0.3s ease;
-      position: relative;
-    }
-
-    .series-card.selected {
-      border-color: #40E0D0;
+    .btn-secondary {
       background: rgba(64, 224, 208, 0.1);
+      color: #40E0D0;
+      border: 1px solid rgba(64, 224, 208, 0.3);
     }
 
-    .series-card:hover {
-      transform: translateY(-4px);
-      border-color: rgba(64, 224, 208, 0.5);
+    .btn-secondary:hover {
+      background: rgba(64, 224, 208, 0.2);
     }
 
-    .series-checkbox {
-      position: absolute;
-      top: 1rem;
-      right: 1rem;
-      width: 24px;
-      height: 24px;
-      cursor: pointer;
-      z-index: 10;
-    }
-
-    .series-photos {
+    .photo-preview {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: 0.5rem;
-      margin-bottom: 1rem;
+      margin-bottom: 1.5rem;
     }
 
-    .series-photos img {
+    .photo-preview img {
       width: 100%;
       aspect-ratio: 4/5;
       object-fit: cover;
       border-radius: 8px;
-      border: 1px solid rgba(64, 224, 208, 0.2);
-    }
-
-    .series-info {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      color: rgba(255, 255, 255, 0.6);
-      font-size: 0.85rem;
-      margin-bottom: 0.5rem;
-    }
-
-    .btn-delete {
-      width: 100%;
-      padding: 0.75rem;
-      background: rgba(220, 38, 38, 0.2);
-      border: 1px solid rgba(220, 38, 38, 0.5);
-      color: #FCA5A5;
-      border-radius: 8px;
-      cursor: pointer;
-      font-weight: 600;
-      transition: all 0.3s ease;
-    }
-
-    .btn-delete:hover {
-      background: rgba(220, 38, 38, 0.3);
+      border: 2px solid rgba(64, 224, 208, 0.3);
     }
 
     .loading {
       text-align: center;
-      padding: 3rem;
+      padding: 2rem;
     }
 
     .spinner {
@@ -352,15 +186,11 @@
       100% { transform: rotate(360deg); }
     }
 
-    .empty-state {
+    .status {
       text-align: center;
-      padding: 3rem;
       color: rgba(255, 255, 255, 0.5);
-    }
-
-    .empty-state-icon {
-      font-size: 4rem;
-      margin-bottom: 1rem;
+      font-size: 0.9rem;
+      margin-top: 1rem;
     }
 
     .hidden {
@@ -371,334 +201,234 @@
 <body>
   <div class="container">
     <div class="glass-card">
-      <h1>🎛️ Administration</h1>
-      <p class="subtitle">Gérez vos séries de photos</p>
+      <h1>📸 Photobooth</h1>
+      <p class="subtitle">Souriez, vous allez être célèbre !</p>
 
-      <div class="stats">
-        <div class="stat-card">
-          <div class="stat-value" id="totalSeries">0</div>
-          <div class="stat-label">Séries totales</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-value" id="totalPhotos">0</div>
-          <div class="stat-label">Photos totales</div>
-        </div>
+      <div id="errorMessage" class="error-message hidden"></div>
+      <div id="successMessage" class="success-message hidden"></div>
+
+      <div class="video-container">
+        <video id="video" autoplay playsinline></video>
+        <canvas id="canvas"></canvas>
+        <div id="countdown" class="countdown hidden"></div>
       </div>
 
-      <div class="tabs">
-        <div class="tab active" data-tab="slideshow">📽️ Diaporama</div>
-        <div class="tab" data-tab="gallery">🖼️ Galerie</div>
+      <div id="photoPreview" class="photo-preview hidden"></div>
+
+      <button id="startBtn" class="btn btn-primary">
+        🎬 Démarrer la séance
+      </button>
+
+      <button id="retakeBtn" class="btn btn-secondary hidden">
+        🔄 Recommencer
+      </button>
+
+      <button id="uploadBtn" class="btn btn-primary hidden">
+        📤 Envoyer les photos
+      </button>
+
+      <div id="loading" class="loading hidden">
+        <div class="spinner"></div>
+        <p>Envoi en cours...</p>
       </div>
-    </div>
 
-    <!-- Onglet Diaporama -->
-    <div id="slideshow" class="tab-content active">
-      <div class="glass-card">
-        <div class="slideshow-container">
-          <canvas id="slideshowCanvas" class="slideshow-image active"></canvas>
-          <img id="overlayImage" class="slideshow-overlay" style="display: none;">
-        </div>
-
-        <div class="slideshow-controls">
-          <div class="control-group">
-            <label class="control-label">⏱️ Durée d'affichage</label>
-            <input type="range" id="durationSlider" min="1" max="10" value="3" step="0.5">
-            <span class="slider-value"><span id="durationValue">3</span>s</span>
-          </div>
-
-          <div class="control-group">
-            <label class="control-label">🖼️ Overlay (PNG transparent)</label>
-            <p class="control-info">📐 Résolution requise : 1080 x 1350 pixels (ratio 4:5)</p>
-            <input type="file" id="overlayUpload" accept="image/png">
-            <button class="btn btn-danger" id="removeOverlay" style="margin-top: 1rem; display: none;">
-              ❌ Retirer l'overlay
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Onglet Galerie -->
-    <div id="gallery" class="tab-content">
-      <div class="glass-card">
-        <div class="toolbar">
-          <div>
-            <button class="btn btn-primary" id="selectAllBtn">✓ Tout sélectionner</button>
-            <button class="btn btn-primary" id="deselectAllBtn">✗ Tout désélectionner</button>
-          </div>
-          <button class="btn btn-danger" id="deleteSelectedBtn">🗑️ Supprimer la sélection</button>
-        </div>
-
-        <div id="loading" class="loading">
-          <div class="spinner"></div>
-          <p style="color: rgba(255, 255, 255, 0.6);">Chargement des séries...</p>
-        </div>
-
-        <div id="seriesContainer" class="series-grid"></div>
-
-        <div id="emptyState" class="empty-state hidden">
-          <div class="empty-state-icon">📸</div>
-          <h3>Aucune série de photos</h3>
-          <p>Les photos prises apparaîtront ici</p>
-        </div>
-      </div>
+      <p class="status">3 photos seront prises automatiquement</p>
     </div>
   </div>
 
   <script>
-    // État global
-    let allSeries = [];
-    let currentSlideIndex = 0;
-    let slideshowInterval = null;
-    let slideshowDuration = 3000;
-    let overlayImageSrc = null;
-
-    const canvas = document.getElementById('slideshowCanvas');
+    const video = document.getElementById('video');
+    const canvas = document.getElementById('canvas');
     const ctx = canvas.getContext('2d');
-    const overlayImg = document.getElementById('overlayImage');
-
-    // Tabs
-    document.querySelectorAll('.tab').forEach(tab => {
-      tab.addEventListener('click', () => {
-        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-        tab.classList.add('active');
-        document.getElementById(tab.dataset.tab).classList.add('active');
-
-        if (tab.dataset.tab === 'slideshow') {
-          startSlideshow();
-        } else {
-          stopSlideshow();
-        }
-      });
-    });
-
-    // Charger les séries
-    async function loadSeries() {
-      try {
-        const response = await fetch('/api/series');
-        const data = await response.json();
-
-        loading.style.display = 'none';
-
-        if (data.series && data.series.length > 0) {
-          allSeries = data.series;
-          displaySeries(data.series);
-          updateStats(data.series);
-          emptyState.classList.add('hidden');
-          
-          if (document.getElementById('slideshow').classList.contains('active')) {
-            startSlideshow();
-          }
-        } else {
-          allSeries = [];
-          seriesContainer.innerHTML = '';
-          emptyState.classList.remove('hidden');
-          updateStats([]);
-          stopSlideshow();
-        }
-      } catch (error) {
-        loading.style.display = 'none';
-        console.error('Erreur:', error);
-      }
-    }
-
-    // Diaporama
-    function startSlideshow() {
-      if (allSeries.length === 0) return;
-      stopSlideshow();
-      
-      showSlide(0);
-      slideshowInterval = setInterval(() => {
-        currentSlideIndex = (currentSlideIndex + 1) % getAllPhotos().length;
-        showSlide(currentSlideIndex);
-      }, slideshowDuration);
-    }
-
-    function stopSlideshow() {
-      if (slideshowInterval) {
-        clearInterval(slideshowInterval);
-        slideshowInterval = null;
-      }
-    }
-
-    function getAllPhotos() {
-      const photos = [];
-      allSeries.forEach(series => {
-        series.photos.forEach(photo => photos.push(photo));
-      });
-      return photos;
-    }
-
-    function showSlide(index) {
-      const photos = getAllPhotos();
-      if (photos.length === 0) return;
-
-      const photoSrc = photos[index];
-      const img = new Image();
-      img.onload = () => {
-        canvas.width = 1080;
-        canvas.height = 1350;
-        
-        // Dessiner la photo (cover pour remplir sans déformation)
-        const imgRatio = img.width / img.height;
-        const canvasRatio = canvas.width / canvas.height;
-        
-        let sx = 0, sy = 0, sw = img.width, sh = img.height;
-        
-        if (imgRatio > canvasRatio) {
-          sw = img.height * canvasRatio;
-          sx = (img.width - sw) / 2;
-        } else {
-          sh = img.width / canvasRatio;
-          sy = (img.height - sh) / 2;
-        }
-        
-        ctx.drawImage(img, sx, sy, sw, sh, 0, 0, canvas.width, canvas.height);
-      };
-      img.src = photoSrc;
-    }
-
-    // Contrôles diaporama
-    document.getElementById('durationSlider').addEventListener('input', (e) => {
-      slideshowDuration = parseFloat(e.target.value) * 1000;
-      document.getElementById('durationValue').textContent = e.target.value;
-      if (slideshowInterval) {
-        startSlideshow();
-      }
-    });
-
-    document.getElementById('overlayUpload').addEventListener('change', (e) => {
-      const file = e.target.files[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = (event) => {
-          overlayImageSrc = event.target.result;
-          overlayImg.src = overlayImageSrc;
-          overlayImg.style.display = 'block';
-          document.getElementById('removeOverlay').style.display = 'block';
-        };
-        reader.readAsDataURL(file);
-      }
-    });
-
-    document.getElementById('removeOverlay').addEventListener('click', () => {
-      overlayImageSrc = null;
-      overlayImg.style.display = 'none';
-      overlayImg.src = '';
-      document.getElementById('overlayUpload').value = '';
-      document.getElementById('removeOverlay').style.display = 'none';
-    });
-
-    // Galerie
+    const startBtn = document.getElementById('startBtn');
+    const retakeBtn = document.getElementById('retakeBtn');
+    const uploadBtn = document.getElementById('uploadBtn');
+    const countdown = document.getElementById('countdown');
+    const photoPreview = document.getElementById('photoPreview');
+    const errorMessage = document.getElementById('errorMessage');
+    const successMessage = document.getElementById('successMessage');
     const loading = document.getElementById('loading');
-    const seriesContainer = document.getElementById('seriesContainer');
-    const emptyState = document.getElementById('emptyState');
-    const totalSeriesEl = document.getElementById('totalSeries');
-    const totalPhotosEl = document.getElementById('totalPhotos');
 
-    function displaySeries(series) {
-      seriesContainer.innerHTML = series.map(s => `
-        <div class="series-card" data-id="${s.id}">
-          <input type="checkbox" class="series-checkbox" data-id="${s.id}">
-          <div class="series-photos">
-            ${s.photos.map(photo => `
-              <img src="${photo}" alt="Photo">
-            `).join('')}
-          </div>
-          <div class="series-info">
-            <span>📅 ${formatDate(s.timestamp)}</span>
-            <span>${s.count} photos</span>
-          </div>
-          <button class="btn-delete" onclick="deleteSeries('${s.id}')">
-            🗑️ Supprimer
-          </button>
-        </div>
-      `).join('');
+    let capturedPhotos = [];
+    let stream = null;
 
-      // Événements checkbox
-      document.querySelectorAll('.series-checkbox').forEach(checkbox => {
-        checkbox.addEventListener('change', (e) => {
-          const card = document.querySelector(`.series-card[data-id="${e.target.dataset.id}"]`);
-          if (e.target.checked) {
-            card.classList.add('selected');
-          } else {
-            card.classList.remove('selected');
-          }
+    // Initialiser la caméra
+    async function initCamera() {
+      try {
+        stream = await navigator.mediaDevices.getUserMedia({ 
+          video: { 
+            width: 1080, 
+            height: 1350,
+            facingMode: 'user' 
+          } 
         });
+        video.srcObject = stream;
+        hideError();
+      } catch (error) {
+        showError('Impossible d\'accéder à la caméra. Veuillez autoriser l\'accès.');
+      }
+    }
+
+    // Démarrer la séance photo
+    startBtn.addEventListener('click', async () => {
+      if (!stream) await initCamera();
+      capturedPhotos = [];
+      photoPreview.innerHTML = '';
+      photoPreview.classList.add('hidden');
+      retakeBtn.classList.add('hidden');
+      uploadBtn.classList.add('hidden');
+      startBtn.disabled = true;
+      
+      await takePhotos();
+    });
+
+    // Prendre 3 photos
+    async function takePhotos() {
+      for (let i = 0; i < 3; i++) {
+        await showCountdown(3);
+        const photo = capturePhoto();
+        capturedPhotos.push(photo);
+        displayPhoto(photo);
+        await sleep(500);
+      }
+      
+      startBtn.disabled = false;
+      photoPreview.classList.remove('hidden');
+      retakeBtn.classList.remove('hidden');
+      uploadBtn.classList.remove('hidden');
+    }
+
+    // Compte à rebours
+    function showCountdown(seconds) {
+      return new Promise(resolve => {
+        countdown.classList.remove('hidden');
+        let count = seconds;
+        countdown.textContent = count;
+        
+        const interval = setInterval(() => {
+          count--;
+          if (count > 0) {
+            countdown.textContent = count;
+          } else {
+            countdown.classList.add('hidden');
+            clearInterval(interval);
+            resolve();
+          }
+        }, 1000);
       });
     }
 
-    function updateStats(series) {
-      totalSeriesEl.textContent = series.length;
-      const totalPhotos = series.reduce((acc, s) => acc + s.count, 0);
-      totalPhotosEl.textContent = totalPhotos;
+    // Capturer une photo (crop centré sans déformation)
+    function capturePhoto() {
+      const targetWidth = 1080;
+      const targetHeight = 1350;
+      const targetRatio = targetWidth / targetHeight;
+      
+      const videoWidth = video.videoWidth;
+      const videoHeight = video.videoHeight;
+      const videoRatio = videoWidth / videoHeight;
+      
+      let sx, sy, sw, sh;
+      
+      if (videoRatio > targetRatio) {
+        // Vidéo plus large - crop les côtés
+        sh = videoHeight;
+        sw = videoHeight * targetRatio;
+        sx = (videoWidth - sw) / 2;
+        sy = 0;
+      } else {
+        // Vidéo plus haute - crop haut/bas
+        sw = videoWidth;
+        sh = videoWidth / targetRatio;
+        sx = 0;
+        sy = (videoHeight - sh) / 2;
+      }
+      
+      canvas.width = targetWidth;
+      canvas.height = targetHeight;
+      ctx.drawImage(video, sx, sy, sw, sh, 0, 0, targetWidth, targetHeight);
+      return canvas.toDataURL('image/jpeg', 0.9);
     }
 
-    async function deleteSeries(id) {
-      if (!confirm('Êtes-vous sûr de vouloir supprimer cette série ?')) return;
+    // Afficher la photo
+    function displayPhoto(dataUrl) {
+      const img = document.createElement('img');
+      img.src = dataUrl;
+      photoPreview.appendChild(img);
+    }
+
+    // Recommencer
+    retakeBtn.addEventListener('click', () => {
+      capturedPhotos = [];
+      photoPreview.innerHTML = '';
+      photoPreview.classList.add('hidden');
+      retakeBtn.classList.add('hidden');
+      uploadBtn.classList.add('hidden');
+    });
+
+    // Envoyer les photos
+    uploadBtn.addEventListener('click', async () => {
+      loading.classList.remove('hidden');
+      uploadBtn.disabled = true;
 
       try {
-        const response = await fetch(`/api/series/${id}`, {
-          method: 'DELETE'
+        const formData = new FormData();
+        
+        for (let i = 0; i < capturedPhotos.length; i++) {
+          const blob = await fetch(capturedPhotos[i]).then(r => r.blob());
+          formData.append('photos', blob, `photo${i + 1}.jpg`);
+        }
+
+        const response = await fetch('/api/upload', {
+          method: 'POST',
+          body: formData
         });
 
         const data = await response.json();
 
         if (data.success) {
-          loadSeries();
+          showSuccess('✅ Photos envoyées avec succès !');
+          capturedPhotos = [];
+          photoPreview.innerHTML = '';
+          photoPreview.classList.add('hidden');
+          retakeBtn.classList.add('hidden');
+          uploadBtn.classList.add('hidden');
+          
+          setTimeout(() => {
+            successMessage.classList.add('hidden');
+          }, 3000);
         } else {
-          alert('Erreur lors de la suppression');
+          showError('Erreur lors de l\'envoi des photos');
         }
       } catch (error) {
-        alert('Erreur de connexion');
+        showError('Erreur de connexion au serveur');
+      } finally {
+        loading.classList.add('hidden');
+        uploadBtn.disabled = false;
       }
+    });
+
+    // Utilitaires
+    function showError(message) {
+      errorMessage.textContent = message;
+      errorMessage.classList.remove('hidden');
     }
 
-    function formatDate(timestamp) {
-      const date = new Date(timestamp);
-      return date.toLocaleString('fr-FR', {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit'
-      });
+    function hideError() {
+      errorMessage.classList.add('hidden');
     }
 
-    // Sélection multiple
-    document.getElementById('selectAllBtn').addEventListener('click', () => {
-      document.querySelectorAll('.series-checkbox').forEach(cb => {
-        cb.checked = true;
-        document.querySelector(`.series-card[data-id="${cb.dataset.id}"]`).classList.add('selected');
-      });
-    });
+    function showSuccess(message) {
+      successMessage.textContent = message;
+      successMessage.classList.remove('hidden');
+    }
 
-    document.getElementById('deselectAllBtn').addEventListener('click', () => {
-      document.querySelectorAll('.series-checkbox').forEach(cb => {
-        cb.checked = false;
-        document.querySelector(`.series-card[data-id="${cb.dataset.id}"]`).classList.remove('selected');
-      });
-    });
+    function sleep(ms) {
+      return new Promise(resolve => setTimeout(resolve, ms));
+    }
 
-    document.getElementById('deleteSelectedBtn').addEventListener('click', async () => {
-      const selected = Array.from(document.querySelectorAll('.series-checkbox:checked'));
-      
-      if (selected.length === 0) {
-        alert('Aucune série sélectionnée');
-        return;
-      }
-
-      if (!confirm(`Supprimer ${selected.length} série(s) ?`)) return;
-
-      for (const checkbox of selected) {
-        await deleteSeries(checkbox.dataset.id);
-      }
-    });
-
-    // Initialisation
-    loadSeries();
-    setInterval(loadSeries, 10000);
+    // Initialiser au chargement
+    initCamera();
   </script>
 </body>
 </html>
