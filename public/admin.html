@@ -366,6 +366,9 @@
     const totalSeriesEl = document.getElementById('totalSeries');
     const totalPhotosEl = document.getElementById('totalPhotos');
 
+    // Variable globale pour stocker les séries
+    let photoSeries = [];
+
     // Charger les séries
     async function loadSeries() {
       try {
@@ -375,13 +378,17 @@
         loading.style.display = 'none';
 
         if (data.series && data.series.length > 0) {
+          photoSeries = data.series; // Stocker les séries globalement
           displaySeries(data.series);
           updateStats(data.series);
           emptyState.style.display = 'none';
+          collectAllPhotos(); // Mettre à jour le diaporama
         } else {
+          photoSeries = [];
           seriesContainer.innerHTML = '';
           emptyState.style.display = 'block';
           updateStats([]);
+          collectAllPhotos(); // Mettre à jour le diaporama
         }
       } catch (error) {
         loading.style.display = 'none';
@@ -474,6 +481,7 @@
 
     // Collecter toutes les photos
     function collectAllPhotos() {
+      const previousCount = allPhotos.length;
       allPhotos = [];
       photoSeries.forEach(series => {
         series.photos.forEach(photo => {
@@ -483,6 +491,17 @@
 
       // Activer/désactiver le bouton
       startSlideshowBtn.disabled = allPhotos.length === 0;
+
+      // Si le diaporama est actif et qu'il y a de nouvelles photos, mettre à jour le compteur
+      if (slideshowOverlay.classList.contains('active') && allPhotos.length > 0) {
+        // Mettre à jour le compteur si on est toujours dans les limites
+        if (currentPhotoIndex >= allPhotos.length) {
+          currentPhotoIndex = 0;
+        }
+        slideshowCounter.textContent = `${currentPhotoIndex + 1} / ${allPhotos.length}`;
+        const progress = ((currentPhotoIndex + 1) / allPhotos.length) * 100;
+        progressBar.style.width = `${progress}%`;
+      }
 
       return allPhotos;
     }
@@ -599,13 +618,6 @@
           break;
       }
     });
-
-    // Mettre à jour la liste des photos lors du chargement
-    const originalLoadSeries = loadSeries;
-    loadSeries = async function() {
-      await originalLoadSeries();
-      collectAllPhotos();
-    };
   </script>
 </body>
 </html>
